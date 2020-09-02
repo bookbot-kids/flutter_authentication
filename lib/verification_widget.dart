@@ -1,23 +1,39 @@
 import 'dart:async';
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_authentication/auth_logger_adatper.dart';
+import 'package:flutter_authentication/themes.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:webview_flutter/platform_interface.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 enum ScreenState { init, verifyCode, confirm }
 
+class VerificationTheme {
+  final Color background;
+  final TextStyle titleStyle;
+
+  const VerificationTheme({
+    this.background = const Color.fromARGB(255, 255, 255, 255),
+    this.titleStyle,
+  });
+}
+
 class VerificationWidget extends StatefulWidget {
   final String email;
   final String b2cUrl;
   final Function(String) callback;
   final Function errorCallback;
+  final String title;
+  final VerificationTheme theme;
 
   VerificationWidget({
     Key key,
+    this.title = 'Verification',
+    this.theme = const VerificationTheme(),
     @required this.email,
     @required this.b2cUrl,
     @required this.callback,
@@ -42,7 +58,7 @@ class VerificationState extends State<VerificationWidget> {
   bool _siteLoaded = false;
   DateTime _start;
   int _injectFailedCount = 0;
-  final loginTimeout = 30000;
+  double loginTimeout = 30000;
 
   void onItemPressed(BuildContext context) => Navigator.pop(context);
 
@@ -258,6 +274,8 @@ class VerificationState extends State<VerificationWidget> {
       // get the id token after user sign in
       String idToken = url.replaceAll("https://jwt.ms/#id_token=", "");
       widget.callback(idToken);
+    } else {
+      widget.errorCallback();
     }
   }
 
@@ -268,11 +286,23 @@ class VerificationState extends State<VerificationWidget> {
     super.dispose();
   }
 
-  Widget _buildBox() {
+  Widget _buildBox(bool isTablet) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment:
+          isTablet ? MainAxisAlignment.center : MainAxisAlignment.start,
       children: <Widget>[
+        Container(
+          margin: const EdgeInsets.only(top: 90, bottom: 20),
+          width: isTablet ? 375 : 320,
+          child: AutoSizeText(
+            widget.title,
+            style: widget.theme.titleStyle,
+            textAlign: TextAlign.center,
+            maxLines: 4,
+            minFontSize: 0,
+          ),
+        ),
         Stack(
           children: <Widget>[
             Positioned(
@@ -283,8 +313,8 @@ class VerificationState extends State<VerificationWidget> {
                 child: Container(
                   height: 390,
                   child: Container(
-                      width: 320,
-                      height: 450,
+                      width: isTablet ? 375 : 320,
+                      height: isTablet ? 450 : 390,
                       child: Container(
                         decoration: BoxDecoration(
                           color: Color.fromARGB(255, 255, 255, 255),
@@ -328,6 +358,7 @@ class VerificationState extends State<VerificationWidget> {
 
   @override
   Widget build(BuildContext context) {
+    bool isTablet = Device.isTablet;
     return PlatformScaffold(
       material: (_, target) =>
           MaterialScaffoldData(resizeToAvoidBottomInset: false),
@@ -336,14 +367,32 @@ class VerificationState extends State<VerificationWidget> {
       body: Stack(
         alignment: Alignment.bottomCenter,
         children: [
-          Positioned(left: 0, top: 0, right: 0, bottom: 0, child: Container()),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: Gradients.primaryGradient,
+              ),
+              child: Container(
+                color: widget.theme.background,
+              ),
+            ),
+          ),
           Positioned(
             child: AppBar(
                 centerTitle: true,
-                elevation: 0.0,
+                leading: IconButton(
+                  icon: Icon(Icons.arrow_back, color: Colors.black),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
                 backgroundColor: Colors.transparent),
           ),
-          Positioned(child: SafeArea(child: _buildBox())),
+          Positioned(
+              top: isTablet ? 0 : null,
+              bottom: isTablet ? 0 : null,
+              child: SafeArea(child: _buildBox(isTablet))),
         ],
       ),
     );
