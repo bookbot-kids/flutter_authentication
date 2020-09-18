@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_authentication/input_email_widget.dart';
-import 'package:flutter_authentication/verification_widget.dart';
+import 'package:flutter_authentication/authentication_widget.dart';
 
 void main() {
   runApp(MyApp());
@@ -57,13 +57,8 @@ class _MyHomePageState extends State<MyHomePage> {
         context,
         MaterialPageRoute(
             builder: (c) => Material(
-                  child: VerificationWidget(
+                  child: AuthenticationWidget(
                     email: email,
-                    b2cUrl: '',
-                    errorCallback: () {},
-                    callback: (idToken) {
-                      print(idToken);
-                    },
                   ),
                 )));
   }
@@ -84,11 +79,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       context,
                       MaterialPageRoute(
                           builder: (c) => Material(
-                                child: InputEmailWidget(
-                                  callback: (email) {
-                                    goToAuthenticate(email);
-                                  },
-                                ),
+                                child: InputEmailWidget(),
                               )));
                 },
                 child: Text('Click here to enter'))

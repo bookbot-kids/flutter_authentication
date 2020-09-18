@@ -1,6 +1,9 @@
 import 'package:auto_size_text/auto_size_text.dart';
+import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_authentication/authentication_service.dart';
+import 'package:flutter_authentication/authentication_widget.dart';
 import 'package:flutter_authentication/themes.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
@@ -21,8 +24,8 @@ class InputEmailTheme {
 class InputEmailWidget extends StatefulWidget {
   final String placeholder;
   final String buttonText;
-  final Function(String) callback;
   final String titleText;
+  final String dialogActionText;
   final InputEmailTheme theme;
 
   const InputEmailWidget({
@@ -31,7 +34,7 @@ class InputEmailWidget extends StatefulWidget {
     this.theme = const InputEmailTheme(),
     this.buttonText = 'Continue',
     this.titleText = 'Welcome',
-    @required this.callback,
+    this.dialogActionText = 'OK',
   }) : super(key: key);
 
   @override
@@ -50,7 +53,22 @@ class InputEmailState extends State<InputEmailWidget> {
   Future onContinuePressed(BuildContext context) async {
     var email = textController.text;
     email = email?.toLowerCase()?.trim();
-    widget.callback(email);
+    if (email.isEmpty || !RegexUtil.isEmail(email)) {
+      AuthenticationService.shared.errorNotifier.notify('Email is invalid');
+      return;
+    }
+
+    var response = await AuthenticationService.shared.verifyEmail(email);
+    if (response != null) {
+      Navigator.push(
+          context,
+          platformPageRoute(
+            context: context,
+            builder: (rootContext) => AuthenticationWidget(email: email),
+          ));
+    } else {
+      AuthenticationService.shared.errorNotifier.notify('Verify email error');
+    }
   }
 
   Widget _buildBox(bool isTablet) {
@@ -227,57 +245,58 @@ class InputEmailState extends State<InputEmailWidget> {
         600;
     return PlatformScaffold(
         body: InkWell(
-      onTap: () {
-        //  hide soft keyboard
-        FocusScope.of(context).requestFocus(new FocusNode());
-      },
-      child: Container(
-        constraints: BoxConstraints.expand(),
-        decoration: BoxDecoration(
-          color: Color.fromARGB(255, 67, 117, 163),
-        ),
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            Positioned(
-              left: 0,
-              top: 0,
-              right: 0,
-              bottom: 0,
-              child: Stack(
-                alignment: Alignment.bottomCenter,
-                children: [
-                  Positioned(
-                    left: 0,
-                    top: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: Container(),
-                  ),
-                  Positioned(
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    child: Container(
-                      height: 700,
-                      decoration: BoxDecoration(
-                        gradient: Gradients.primaryGradient,
+            onTap: () {
+              //  hide soft keyboard
+              FocusScope.of(context).requestFocus(new FocusNode());
+            },
+            child: Material(
+              child: Container(
+                constraints: BoxConstraints.expand(),
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 67, 117, 163),
+                ),
+                child: Stack(
+                  alignment: Alignment.bottomCenter,
+                  children: [
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      right: 0,
+                      bottom: 0,
+                      child: Stack(
+                        alignment: Alignment.bottomCenter,
+                        children: [
+                          Positioned(
+                            left: 0,
+                            top: 0,
+                            right: 0,
+                            bottom: 0,
+                            child: Container(),
+                          ),
+                          Positioned(
+                            left: 0,
+                            right: 0,
+                            bottom: 0,
+                            child: Container(
+                              height: 700,
+                              decoration: BoxDecoration(
+                                gradient: Gradients.primaryGradient,
+                              ),
+                              child: Container(),
+                            ),
+                          ),
+                        ],
                       ),
-                      child: Container(),
                     ),
-                  ),
-                ],
+                    Positioned(
+                        left: 0,
+                        right: 0,
+                        top: isTablet ? 14 : null,
+                        bottom: 14,
+                        child: _buildBox(isTablet)),
+                  ],
+                ),
               ),
-            ),
-            Positioned(
-                left: 0,
-                right: 0,
-                top: isTablet ? 14 : null,
-                bottom: 14,
-                child: _buildBox(isTablet)),
-          ],
-        ),
-      ),
-    ));
+            )));
   }
 }
