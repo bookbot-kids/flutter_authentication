@@ -1,5 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_authentication/authentication_widget.dart';
 import 'package:flutter_authentication/input_email_widget.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:logger/logger.dart';
@@ -27,18 +29,35 @@ class AuthenticationService {
   String b2cUrl;
 
   void init(Logger logger, Map<String, dynamic> config) {
-    _azureCode = config["azure_code"];
+    _azureCode = config['azure_code'];
     this.logger = logger;
-    _http = HTTP(config["azureBaseUrl"]);
-    b2cUrl = config["azureB2CAuthUrl"];
+    _http = HTTP(config['azureBaseUrl']);
+    b2cUrl = config['azureB2CAuthUrl'];
   }
 
-  void startAuthenticationModal(BuildContext context) {
-    showPlatformDialog(
+  void startAuthentication(BuildContext context) {
+    showGeneralDialog(
         context: context,
-        builder: (_) {
-          return InputEmailWidget();
+        barrierDismissible: true,
+        barrierLabel:
+            MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        barrierColor: Colors.black45,
+        transitionDuration: const Duration(milliseconds: 200),
+        pageBuilder: (BuildContext buildContext, Animation animation,
+            Animation secondaryAnimation) {
+          return Container(
+            child: InputEmailWidget(),
+          );
         });
+  }
+
+  void startPasscodeScreen(BuildContext context, String email) {
+    Navigator.push(
+        context,
+        platformPageRoute(
+          context: context,
+          builder: (rootContext) => AuthenticationWidget(email: email),
+        ));
   }
 
   Future<dynamic> verifyEmail(String email) async {

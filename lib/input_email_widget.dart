@@ -7,35 +7,11 @@ import 'package:flutter_authentication/authentication_widget.dart';
 import 'package:flutter_authentication/themes.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
-class InputEmailTheme {
-  final TextStyle textFieldStyle;
-  final TextStyle labelTextStyle;
-  final Color background;
-  final TextStyle buttonStyle;
-
-  const InputEmailTheme({
-    this.textFieldStyle,
-    this.labelTextStyle,
-    this.background = const Color.fromARGB(255, 255, 255, 255),
-    this.buttonStyle,
-  });
-}
-
 class InputEmailWidget extends StatefulWidget {
-  final String placeholder;
-  final String buttonText;
-  final String titleText;
-  final String dialogActionText;
-  final InputEmailTheme theme;
-
-  const InputEmailWidget({
-    Key key,
-    this.placeholder = 'Email',
-    this.theme = const InputEmailTheme(),
-    this.buttonText = 'Continue',
-    this.titleText = 'Welcome',
-    this.dialogActionText = 'OK',
-  }) : super(key: key);
+  final AuthenticationThemeSettings themes;
+  const InputEmailWidget(
+      {Key key, this.themes = const AuthenticationThemeSettings()})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => InputEmailState();
@@ -58,41 +34,43 @@ class InputEmailState extends State<InputEmailWidget> {
       return;
     }
 
+    setState(() {
+      showLoading = true;
+    });
     var response = await AuthenticationService.shared.verifyEmail(email);
+
+    setState(() {
+      showLoading = false;
+    });
+
     if (response != null) {
-      Navigator.push(
-          context,
-          platformPageRoute(
-            context: context,
-            builder: (rootContext) => AuthenticationWidget(email: email),
-          ));
+      AuthenticationService.shared.startPasscodeScreen(context, email);
     } else {
       AuthenticationService.shared.errorNotifier.notify('Verify email error');
     }
   }
 
-  Widget _buildBox(bool isTablet) {
+  Widget _buildBox() {
     return Column(
-      mainAxisAlignment:
-          isTablet ? MainAxisAlignment.center : MainAxisAlignment.end,
+      mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Align(
           alignment: Alignment.topCenter,
           child: Container(
-            width: isTablet ? 450 : 320,
-            height: 500,
+            width: widget.themes.emailBoxSize,
+            height: widget.themes.emailBoxSize,
             child: Stack(
               alignment: Alignment.center,
               children: [
                 Positioned(
                   left: 0,
-                  top: 31,
-                  right: -1,
+                  top: 0,
+                  right: 0,
                   bottom: 0,
                   child: Container(
                     decoration: BoxDecoration(
-                      color: widget.theme.background,
+                      color: widget.themes.emailBoxColor,
                       boxShadow: [
                         Shadows.primaryShadow,
                       ],
@@ -103,41 +81,36 @@ class InputEmailState extends State<InputEmailWidget> {
                 ),
                 Positioned(
                   left: 20,
-                  top: 0,
+                  top: 20,
                   right: 20,
-                  bottom: 21,
+                  bottom: 20,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       Expanded(
                         flex: 1,
                         child: Container(
-                          margin: EdgeInsets.only(left: 4, top: 6, right: 4),
                           child: Center(
                             child: AutoSizeText(
-                              widget.titleText,
+                              widget.themes.emailTitleText,
                               textAlign: TextAlign.center,
-                              maxLines: 6,
-                              style: widget.theme.labelTextStyle,
+                              style: widget.themes.emailTitleTextStyle,
                             ),
                           ),
                         ),
                       ),
                       Container(
-                        height: 78,
+                        height: 90,
                         margin: EdgeInsets.only(bottom: 20),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             Container(
                               height: 15,
-                              margin:
-                                  EdgeInsets.only(left: 18, top: 6, right: 10),
-                              child: AutoSizeText(widget.placeholder,
+                              margin: EdgeInsets.only(top: 10, bottom: 10),
+                              child: Text(widget.themes.emailLabelText,
                                   textAlign: TextAlign.left,
-                                  maxLines: 1,
-                                  minFontSize: 0,
-                                  style: widget.theme.labelTextStyle),
+                                  style: widget.themes.emailLabelTextStyle),
                             ),
                             Spacer(),
                             Container(
@@ -162,7 +135,7 @@ class InputEmailState extends State<InputEmailWidget> {
                                 controller: textController,
                                 material: (_, target) => MaterialTextFieldData(
                                   decoration: InputDecoration(
-                                    hintText: widget.placeholder,
+                                    hintText: widget.themes.emailPlaceholder,
                                     contentPadding: EdgeInsets.only(
                                         left: 18, top: 0, right: 18, bottom: 0),
                                     border: InputBorder.none,
@@ -170,7 +143,7 @@ class InputEmailState extends State<InputEmailWidget> {
                                 ),
                                 cupertino: (_, target) =>
                                     CupertinoTextFieldData(
-                                  placeholder: widget.placeholder,
+                                  placeholder: widget.themes.emailPlaceholder,
                                   padding: EdgeInsets.only(
                                       left: 18, top: 0, right: 18, bottom: 0),
                                   decoration: BoxDecoration(
@@ -178,7 +151,7 @@ class InputEmailState extends State<InputEmailWidget> {
                                         width: 0.0, style: BorderStyle.none),
                                   ),
                                 ),
-                                style: widget.theme.textFieldStyle,
+                                style: widget.themes.emailTextFieldStyle,
                                 maxLines: 1,
                                 keyboardType: TextInputType.emailAddress,
                                 textInputAction: TextInputAction.send,
@@ -198,8 +171,7 @@ class InputEmailState extends State<InputEmailWidget> {
                                 width: double.infinity,
                                 height: double.infinity,
                                 child: FlatButton(
-                                  onPressed: () =>
-                                      this.onContinuePressed(context),
+                                  onPressed: () => onContinuePressed(context),
                                   color: Color.fromARGB(255, 110, 203, 242),
                                   shape: RoundedRectangleBorder(
                                     borderRadius:
@@ -208,11 +180,11 @@ class InputEmailState extends State<InputEmailWidget> {
                                   textColor: Color.fromARGB(255, 255, 255, 255),
                                   padding: EdgeInsets.all(0),
                                   child: AutoSizeText(
-                                    widget.buttonText,
+                                    widget.themes.emailButtonText,
                                     maxLines: 1,
                                     minFontSize: 0,
                                     textAlign: TextAlign.center,
-                                    style: widget.theme.buttonStyle,
+                                    style: widget.themes.emailButtonStyle,
                                   ),
                                 ),
                               ),
@@ -239,64 +211,29 @@ class InputEmailState extends State<InputEmailWidget> {
 
   @override
   Widget build(BuildContext context) {
-    bool isTablet = MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-            .size
-            .shortestSide >=
-        600;
     return PlatformScaffold(
-        body: InkWell(
-            onTap: () {
-              //  hide soft keyboard
-              FocusScope.of(context).requestFocus(new FocusNode());
-            },
-            child: Material(
-              child: Container(
-                constraints: BoxConstraints.expand(),
-                decoration: BoxDecoration(
-                  color: Color.fromARGB(255, 67, 117, 163),
-                ),
-                child: Stack(
-                  alignment: Alignment.bottomCenter,
-                  children: [
-                    Positioned(
-                      left: 0,
-                      top: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: Stack(
-                        alignment: Alignment.bottomCenter,
-                        children: [
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            right: 0,
-                            bottom: 0,
-                            child: Container(),
-                          ),
-                          Positioned(
-                            left: 0,
-                            right: 0,
-                            bottom: 0,
-                            child: Container(
-                              height: 700,
-                              decoration: BoxDecoration(
-                                gradient: Gradients.primaryGradient,
-                              ),
-                              child: Container(),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Positioned(
-                        left: 0,
-                        right: 0,
-                        top: isTablet ? 14 : null,
-                        bottom: 14,
-                        child: _buildBox(isTablet)),
-                  ],
-                ),
-              ),
-            )));
+        body: Material(
+            child: InkWell(
+      onTap: () {
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+      child: Container(
+        constraints: BoxConstraints.expand(),
+        child: Stack(
+          children: [
+            Positioned(
+                left: 0,
+                top: 0,
+                right: 0,
+                bottom: 0,
+                child: widget.themes.background ??
+                    Container(
+                      color: widget.themes.backgroundColor,
+                    )),
+            Positioned(child: _buildBox()),
+          ],
+        ),
+      ),
+    )));
   }
 }

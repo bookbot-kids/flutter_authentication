@@ -1,22 +1,37 @@
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 
-class Gradients {
-  static const Gradient primaryGradient = LinearGradient(
-    begin: Alignment(0.5, 0.89162),
-    end: Alignment(0.5, 0),
-    stops: [
-      0,
-      0.5215,
-      0.68723,
-      1,
-    ],
-    colors: [
-      Color.fromARGB(230, 6, 46, 84),
-      Color.fromARGB(204, 6, 47, 84),
-      Color.fromARGB(0, 0, 0, 0),
-      Color.fromARGB(0, 0, 0, 0),
-    ],
-  );
+class AuthenticationThemeSettings {
+  final TextStyle emailTextFieldStyle;
+  final TextStyle emailLabelTextStyle;
+  final TextStyle emailTitleTextStyle;
+  final Color emailBoxColor;
+  final TextStyle emailButtonStyle;
+  final Widget background;
+  final Color backgroundColor;
+  final String emailPlaceholder;
+  final String emailButtonText;
+  final String emailTitleText;
+  final String emailLabelText;
+  final double emailBoxSize;
+
+  const AuthenticationThemeSettings({
+    this.emailTextFieldStyle,
+    this.emailLabelTextStyle,
+    this.emailTitleTextStyle = const TextStyle(
+      fontSize: 20,
+    ),
+    this.background,
+    this.emailBoxColor = Colors.white,
+    this.emailButtonStyle,
+    this.backgroundColor = Colors.blue,
+    this.emailPlaceholder = 'Enter email',
+    this.emailButtonText = 'Continue',
+    this.emailLabelText = 'Email',
+    this.emailTitleText =
+        'To Sign In or Register, please enter your email address below. Then we will send you a passcode to enter in the next screen.',
+    this.emailBoxSize = 400,
+  });
 }
 
 class Shadows {

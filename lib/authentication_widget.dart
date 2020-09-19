@@ -72,7 +72,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
         return NavigationDecision.navigate;
       },
       onPageFinished: (String url) {
-        AuthenticationService.shared.logger?.i("onPageFinished $url");
+        AuthenticationService.shared.logger?.i('onPageFinished $url');
         _siteLoaded = true;
         if (_timer == null) {
           startTimer();
@@ -80,9 +80,9 @@ class AuthenticationState extends State<AuthenticationWidget> {
       },
       onWebResourceError: (WebResourceError error) {
         AuthenticationService.shared.logger
-            ?.i("onWebResourceError ${error.description}");
+            ?.i('onWebResourceError ${error.description}');
       },
-      gestureRecognizers: Set()
+      gestureRecognizers: <dynamic>{}
         ..add(Factory<TapGestureRecognizer>(() => TapGestureRecognizer()
           ..onTapDown = (tap) {
             SystemChannels.textInput.invokeMethod(
@@ -111,14 +111,15 @@ class AuthenticationState extends State<AuthenticationWidget> {
       }
 
       var now = DateTime.now();
-      int diff = now.difference(_start).inMilliseconds;
+      var diff = now.difference(_start).inMilliseconds;
       AuthenticationService.shared.logger?.i('checkingTimeout $diff');
       if (diff >= loginTimeout) {
         if (_retry < 3) {
           ++_retry;
           AuthenticationService.shared.logger?.i('timeout. retry $_retry');
           _start = DateTime.now();
-          reload().then((value) => null);
+          // ignore: unawaited_futures
+          reload();
         } else {
           timer.cancel();
           AuthenticationService.shared.logger?.i('retried 3 times. Stop timer');
@@ -131,7 +132,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
 
   Future<void> reload() async {
     var controller = await _controller.future;
-    controller?.loadUrl(AuthenticationService.shared.b2cUrl);
+    await controller?.loadUrl(AuthenticationService.shared.b2cUrl);
   }
 
   @override
@@ -149,10 +150,10 @@ class AuthenticationState extends State<AuthenticationWidget> {
             "document.getElementById('email_ver_but_send') !== null && document.getElementById('email_ver_but_send').offsetParent !== null")
         .then((s) async {
       AuthenticationService.shared.logger
-          ?.i("email_ver_but_send is visible $s");
+          ?.i('email_ver_but_send is visible $s');
       // button is visible, then inject click
       if (screenState != ScreenState.verifyCode && (s == '1' || s == 'true')) {
-        injectSendEmail();
+        await injectSendEmail();
         screenState = ScreenState.verifyCode;
       }
     }).catchError((e) {
@@ -173,7 +174,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
             "document.getElementById('email_ver_but_verify') !== null && document.getElementById('email_ver_but_verify').offsetParent !== null")
         .then((s) async {
       AuthenticationService.shared.logger
-          ?.i("email_ver_but_verify is visible $s");
+          ?.i('email_ver_but_verify is visible $s');
       if (s == '1' || s == 'true') {
         screenState = ScreenState.confirm;
       }
@@ -189,14 +190,15 @@ class AuthenticationState extends State<AuthenticationWidget> {
             "document.getElementById('email_ver_but_edit') !== null && document.getElementById('email_ver_but_edit').offsetParent !== null")
         .then((s) async {
       AuthenticationService.shared.logger
-          ?.i("email_ver_but_edit is visible $s");
+          ?.i('email_ver_but_edit is visible $s');
       // button is visible
       if (s == '1' || s == 'true') {
         // show progress loading & inject click continue button
         showHideLoading(true);
+        // ignore: unawaited_futures
         controller
             .evaluateJavascript(
-                "document.getElementById(\"continue\").click();")
+                'document.getElementById(\"continue\").click();')
             .then((s) async {})
             .catchError((e) {
           AuthenticationService.shared.logger?.e(e.toString());
@@ -232,8 +234,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
   }
 
   void startTimer() {
-    _timer =
-        new Timer.periodic(Duration(milliseconds: 1000), detectWebviewState);
+    _timer = Timer.periodic(Duration(milliseconds: 1000), detectWebviewState);
   }
 
   Future injectSendEmail() async {
@@ -242,13 +243,14 @@ class AuthenticationState extends State<AuthenticationWidget> {
       return;
     }
 
+    // ignore: unawaited_futures
     controller
         .evaluateJavascript(
-            "document.getElementById(\"email\").value=\"${widget.email}\"")
+            'document.getElementById(\"email\").value=\"${widget.email}\"')
         .then((s) {
       controller
           .evaluateJavascript(
-              "document.getElementById(\"email_ver_but_send\").click();")
+              'document.getElementById(\"email_ver_but_send\").click();')
           .then((s) async {
         hasInjectedJS = true;
         await Future.delayed(const Duration(milliseconds: 1500));
@@ -262,15 +264,15 @@ class AuthenticationState extends State<AuthenticationWidget> {
   }
 
   Future getToken(String url, BuildContext context) async {
-    AuthenticationService.shared.logger?.i("handleUrl $url");
+    AuthenticationService.shared.logger?.i('handleUrl $url');
     // get id token after user sign in
-    if (url.startsWith("https://jwt.ms/#id_token=")) {
+    if (url.startsWith('https://jwt.ms/#id_token=')) {
       // close keyboard
-      FocusScope.of(context).requestFocus(new FocusNode());
-      SystemChannels.textInput.invokeMethod('TextInput.hide');
+      FocusScope.of(context).requestFocus(FocusNode());
+      await SystemChannels.textInput.invokeMethod('TextInput.hide');
       showHideLoading(true);
       // get the id token after user sign in
-      String idToken = url.replaceAll("https://jwt.ms/#id_token=", "");
+      var idToken = url.replaceAll('https://jwt.ms/#id_token=', '');
       AuthenticationService.shared.successNotifier.notify(idToken);
     } else {
       AuthenticationService.shared.errorNotifier.notify('Can not get token');
@@ -356,7 +358,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
 
   @override
   Widget build(BuildContext context) {
-    bool isTablet = Device.isTablet;
+    var isTablet = Device.isTablet;
     return PlatformScaffold(
         material: (_, target) =>
             MaterialScaffoldData(resizeToAvoidBottomInset: false),
@@ -371,9 +373,6 @@ class AuthenticationState extends State<AuthenticationWidget> {
                 right: 0,
                 bottom: 0,
                 child: Container(
-                  decoration: BoxDecoration(
-                    gradient: Gradients.primaryGradient,
-                  ),
                   child: Container(
                     color: widget.theme.background,
                   ),
