@@ -3,7 +3,6 @@ import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_authentication/authentication_service.dart';
-import 'package:flutter_authentication/authentication_widget.dart';
 import 'package:flutter_authentication/themes.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
@@ -30,7 +29,7 @@ class InputEmailState extends State<InputEmailWidget> {
     var email = textController.text;
     email = email?.toLowerCase()?.trim();
     if (email.isEmpty || !RegexUtil.isEmail(email)) {
-      AuthenticationService.shared.errorNotifier.notify('Email is invalid');
+      AuthenticationService.shared.showErrorModal(context, 'Email is invalid');
       return;
     }
 
@@ -46,7 +45,8 @@ class InputEmailState extends State<InputEmailWidget> {
     if (response != null) {
       AuthenticationService.shared.startPasscodeScreen(context, email);
     } else {
-      AuthenticationService.shared.errorNotifier.notify('Verify email error');
+      AuthenticationService.shared.showErrorModal(
+          context, 'Can not verify your email. Please try again');
     }
   }
 

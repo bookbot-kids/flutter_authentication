@@ -20,16 +20,15 @@ class AuthenticationService {
   static AuthenticationService shared =
       AuthenticationService._privateConstructor();
 
-  String _azureCode;
+  String _azureKey;
 
-  final errorNotifier = Notifier();
   final successNotifier = Notifier();
   Logger logger;
   HTTP _http;
   String b2cUrl;
 
   void init(Logger logger, Map<String, dynamic> config) {
-    _azureCode = config['azure_code'];
+    _azureKey = config['azureKey'];
     this.logger = logger;
     _http = HTTP(config['azureBaseUrl']);
     b2cUrl = config['azureB2CAuthUrl'];
@@ -60,10 +59,25 @@ class AuthenticationService {
         ));
   }
 
+  void showErrorModal(BuildContext context, String message,
+      {String buttonText = 'OK'}) {
+    showPlatformDialog(
+        context: context,
+        builder: (c) => AlertDialog(
+              title: Text(message),
+              actions: [
+                FlatButton(
+                  child: Text(buttonText),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ));
+  }
+
   Future<dynamic> verifyEmail(String email) async {
     try {
       var response = await _http.get('/CheckAccount',
-          parameters: {'code': _azureCode, 'email': email});
+          parameters: {'code': _azureKey, 'email': email});
       if (response['success'] == true) {
         return response;
       }

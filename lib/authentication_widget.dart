@@ -82,11 +82,10 @@ class AuthenticationState extends State<AuthenticationWidget> {
         AuthenticationService.shared.logger
             ?.i('onWebResourceError ${error.description}');
       },
-      gestureRecognizers: <dynamic>{}
+      gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{}
         ..add(Factory<TapGestureRecognizer>(() => TapGestureRecognizer()
           ..onTapDown = (tap) {
-            SystemChannels.textInput.invokeMethod(
-                'TextInput.hide'); //This will hide keyboard ontapdown
+            SystemChannels.textInput.invokeMethod('TextInput.hide');
           })),
     );
   }
@@ -123,8 +122,8 @@ class AuthenticationState extends State<AuthenticationWidget> {
         } else {
           timer.cancel();
           AuthenticationService.shared.logger?.i('retried 3 times. Stop timer');
-          AuthenticationService.shared.errorNotifier
-              .notify('Cannot load authentication');
+          AuthenticationService.shared
+              .showErrorModal(context, 'Cannot load authentication');
         }
       }
     });
@@ -275,7 +274,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
       var idToken = url.replaceAll('https://jwt.ms/#id_token=', '');
       AuthenticationService.shared.successNotifier.notify(idToken);
     } else {
-      AuthenticationService.shared.errorNotifier.notify('Can not get token');
+      AuthenticationService.shared.showErrorModal(context, 'Can not get token');
     }
   }
 
