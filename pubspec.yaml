@@ -12,10 +12,12 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_platform_widgets: ^0.60.2
+  universal_platform: ^0.1.3
   webview_flutter: ^0.3.22+1
   logger: ^0.9.2
   auto_size_text: ^2.1.0
   common_utils: ^1.2.1
+  url_launcher: ^5.6.0
   robust_http:
     git:
       url: git://github.com/bookbot-kids/robust-http.git

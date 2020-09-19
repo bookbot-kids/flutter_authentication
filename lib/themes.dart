@@ -7,13 +7,15 @@ class AuthenticationThemeSettings {
   final TextStyle emailTitleTextStyle;
   final Color emailBoxColor;
   final TextStyle emailButtonStyle;
-  final Widget background;
+  final String backgroundImage;
   final Color backgroundColor;
   final String emailPlaceholder;
   final String emailButtonText;
   final String emailTitleText;
   final String emailLabelText;
   final double emailBoxSize;
+  final String enterTokenButtonText;
+  final String enterTokenText;
 
   const AuthenticationThemeSettings({
     this.emailTextFieldStyle,
@@ -21,16 +23,18 @@ class AuthenticationThemeSettings {
     this.emailTitleTextStyle = const TextStyle(
       fontSize: 20,
     ),
-    this.background,
+    this.backgroundImage,
     this.emailBoxColor = Colors.white,
     this.emailButtonStyle,
     this.backgroundColor = Colors.blue,
     this.emailPlaceholder = 'Enter email',
     this.emailButtonText = 'Continue',
     this.emailLabelText = 'Email',
+    this.enterTokenButtonText = 'Done',
     this.emailTitleText =
         'To Sign In or Register, please enter your email address below. Then we will send you a passcode to enter in the next screen.',
     this.emailBoxSize = 400,
+    this.enterTokenText = 'Enter the token from website here',
   });
 }
 

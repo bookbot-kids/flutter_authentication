@@ -6,31 +6,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_authentication/authentication_service.dart';
 import 'package:flutter_authentication/themes.dart';
+import 'package:flutter_authentication/view_helper.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:webview_flutter/platform_interface.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 enum ScreenState { init, verifyCode, confirm }
 
-class VerificationTheme {
-  final Color background;
-  final TextStyle titleStyle;
-
-  const VerificationTheme({
-    this.background = const Color.fromARGB(255, 255, 255, 255),
-    this.titleStyle,
-  });
-}
-
 class AuthenticationWidget extends StatefulWidget {
   final String email;
   final String title;
-  final VerificationTheme theme;
+  final AuthenticationThemeSettings theme;
 
   AuthenticationWidget({
     Key key,
     this.title = 'Verification',
-    this.theme = const VerificationTheme(),
+    this.theme = const AuthenticationThemeSettings(),
     @required this.email,
   });
 
@@ -122,8 +113,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
         } else {
           timer.cancel();
           AuthenticationService.shared.logger?.i('retried 3 times. Stop timer');
-          AuthenticationService.shared
-              .showErrorModal(context, 'Cannot load authentication');
+          ViewHelper.showModal(context, 'Cannot load authentication');
         }
       }
     });
@@ -265,16 +255,16 @@ class AuthenticationState extends State<AuthenticationWidget> {
   Future getToken(String url, BuildContext context) async {
     AuthenticationService.shared.logger?.i('handleUrl $url');
     // get id token after user sign in
-    if (url.startsWith('https://jwt.ms/#id_token=')) {
+    if (url.contains('#id_token=')) {
       // close keyboard
       FocusScope.of(context).requestFocus(FocusNode());
       await SystemChannels.textInput.invokeMethod('TextInput.hide');
       showHideLoading(true);
       // get the id token after user sign in
-      var idToken = url.replaceAll('https://jwt.ms/#id_token=', '');
+      var idToken = url.split('#id_token=')[1];
       AuthenticationService.shared.successNotifier.notify(idToken);
     } else {
-      AuthenticationService.shared.showErrorModal(context, 'Can not get token');
+      ViewHelper.showModal(context, 'Can not get token');
     }
   }
 
@@ -296,7 +286,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
           width: isTablet ? 375 : 320,
           child: AutoSizeText(
             widget.title,
-            style: widget.theme.titleStyle,
+            style: widget.theme.emailTitleTextStyle,
             textAlign: TextAlign.center,
             maxLines: 4,
             minFontSize: 0,
@@ -372,9 +362,11 @@ class AuthenticationState extends State<AuthenticationWidget> {
                 right: 0,
                 bottom: 0,
                 child: Container(
-                  child: Container(
-                    color: widget.theme.background,
-                  ),
+                  child: widget.theme.backgroundImage != null
+                      ? Image.asset(widget.theme.backgroundImage)
+                      : Container(
+                          color: widget.theme.backgroundColor,
+                        ),
                 ),
               ),
               Positioned(

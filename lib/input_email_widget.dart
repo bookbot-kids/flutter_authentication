@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_authentication/authentication_service.dart';
 import 'package:flutter_authentication/themes.dart';
+import 'package:flutter_authentication/view_helper.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class InputEmailWidget extends StatefulWidget {
@@ -29,7 +30,7 @@ class InputEmailState extends State<InputEmailWidget> {
     var email = textController.text;
     email = email?.toLowerCase()?.trim();
     if (email.isEmpty || !RegexUtil.isEmail(email)) {
-      AuthenticationService.shared.showErrorModal(context, 'Email is invalid');
+      ViewHelper.showModal(context, 'Email is invalid');
       return;
     }
 
@@ -43,9 +44,9 @@ class InputEmailState extends State<InputEmailWidget> {
     });
 
     if (response != null) {
-      AuthenticationService.shared.startPasscodeScreen(context, email);
+      await AuthenticationService.shared.startPasscodeScreen(context, email);
     } else {
-      AuthenticationService.shared.showErrorModal(
+      ViewHelper.showModal(
           context, 'Can not verify your email. Please try again');
     }
   }
@@ -214,9 +215,7 @@ class InputEmailState extends State<InputEmailWidget> {
     return PlatformScaffold(
         body: Material(
             child: InkWell(
-      onTap: () {
-        FocusScope.of(context).requestFocus(FocusNode());
-      },
+      onTap: () => ViewHelper.closeKeyboard(context),
       child: Container(
         constraints: BoxConstraints.expand(),
         child: Stack(
@@ -226,10 +225,11 @@ class InputEmailState extends State<InputEmailWidget> {
                 top: 0,
                 right: 0,
                 bottom: 0,
-                child: widget.themes.background ??
-                    Container(
-                      color: widget.themes.backgroundColor,
-                    )),
+                child: widget.themes.backgroundImage != null
+                    ? Image.asset(widget.themes.backgroundImage)
+                    : Container(
+                        color: widget.themes.backgroundColor,
+                      )),
             Positioned(child: _buildBox()),
           ],
         ),
