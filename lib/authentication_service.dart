@@ -11,7 +11,7 @@ import 'package:robust_http/robust_http.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
-class Notifier extends ChangeNotifier {
+class AuthenticateNotifier extends ChangeNotifier {
   String message;
   void notify(String eventMessage) {
     message = eventMessage;
@@ -26,7 +26,7 @@ class AuthenticationService {
 
   String _azureKey;
 
-  final successNotifier = Notifier();
+  final successNotifier = AuthenticateNotifier();
   Logger logger;
   HTTP _http;
   String b2cUrl;
