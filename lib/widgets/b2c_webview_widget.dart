@@ -14,9 +14,11 @@ class B2CWebviewWidget extends StatefulWidget {
     Key key,
     @required this.email,
     @required this.loadingCallback,
+    @required this.completedCallback,
   }) : super(key: key);
   final String email;
   final Function(bool) loadingCallback;
+  final Function(String) completedCallback;
 
   @override
   _B2CWebviewWidgetState createState() => _B2CWebviewWidgetState();
@@ -208,7 +210,7 @@ class _B2CWebviewWidgetState extends State<B2CWebviewWidget> {
       widget.loadingCallback(true);
       // get the id token after user sign in
       var idToken = url.split('#id_token=')[1];
-      AuthenticationService.shared.successNotifier.notify(idToken);
+      widget.completedCallback(idToken);
     } else {
       ViewHelper.showModal(context, 'Can not get token');
     }
