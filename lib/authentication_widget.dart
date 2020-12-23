@@ -263,8 +263,6 @@ class AuthenticationState extends State<AuthenticationWidget> {
       // get the id token after user sign in
       var idToken = url.split('#id_token=')[1];
       AuthenticationService.shared.successNotifier.notify(idToken);
-    } else {
-      ViewHelper.showModal(context, 'Can not get token');
     }
   }
 

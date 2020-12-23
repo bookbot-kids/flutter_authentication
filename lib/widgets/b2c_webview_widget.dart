@@ -201,6 +201,7 @@ class _B2CWebviewWidgetState extends State<B2CWebviewWidget> {
     if (screenState != AuthenticateState.confirm) {
       return;
     }
+
     AuthenticationService.shared.logger?.i('handleUrl $url');
     // get id token after user sign in
     if (url.contains('#id_token=')) {
@@ -211,8 +212,6 @@ class _B2CWebviewWidgetState extends State<B2CWebviewWidget> {
       // get the id token after user sign in
       var idToken = url.split('#id_token=')[1];
       widget.completedCallback(idToken);
-    } else {
-      ViewHelper.showModal(context, 'Can not get token');
     }
   }
 
