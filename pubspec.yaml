@@ -12,13 +12,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_platform_widgets: ^0.72.0
+  flutter_platform_widgets: ^0.80.0
   universal_platform: ^0.1.3
-  webview_flutter: ^1.0.7
+  webview_flutter: ^2.0.2
   logger: ^0.9.4
   auto_size_text: ^2.1.0
-  common_utils: ^1.2.1
-  url_launcher: ^5.7.10
+  common_utils: ^2.0.2
+  url_launcher: ^6.0.2
   robust_http:
     git:
       url: git://github.com/bookbot-kids/robust-http.git
