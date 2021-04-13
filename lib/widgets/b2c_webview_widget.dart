@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_authentication/authentication_service.dart';
 import 'package:flutter_authentication/view_helper.dart';
+import 'package:universal_platform/universal_platform.dart';
 import 'package:webview_flutter/platform_interface.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -15,10 +16,12 @@ class B2CWebviewWidget extends StatefulWidget {
     @required this.email,
     @required this.loadingCallback,
     @required this.completedCallback,
+    this.useHybridForAndroid = false,
   }) : super(key: key);
   final String email;
   final Function(bool) loadingCallback;
   final Function(String) completedCallback;
+  final bool useHybridForAndroid;
 
   @override
   _B2CWebviewWidgetState createState() => _B2CWebviewWidgetState();
@@ -258,6 +261,9 @@ class _B2CWebviewWidgetState extends State<B2CWebviewWidget> {
   @override
   void initState() {
     super.initState();
+    if (widget.useHybridForAndroid && UniversalPlatform.isAndroid) {
+      WebView.platform = SurfaceAndroidWebView();
+    }
     _start = DateTime.now();
     checkingTimeout();
   }
