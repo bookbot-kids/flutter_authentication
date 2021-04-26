@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_authentication/authentication_widget.dart';
 import 'package:flutter_authentication/input_email_widget.dart';
 import 'package:flutter_authentication/input_token_widget.dart';
+import 'package:flutter_authentication/starting_widget.dart';
 import 'package:flutter_authentication/themes.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:logger/logger.dart';
@@ -31,6 +32,7 @@ class AuthenticationService {
   HTTP _http;
   String b2cUrl;
   Future dialogTask;
+  Future passcodeDialogTask;
 
   void init(Logger logger, Map<String, dynamic> config) {
     _azureKey = config['azureKey'];
@@ -40,9 +42,9 @@ class AuthenticationService {
   }
 
   Future<String> startAuthentication(BuildContext context,
-      {AuthenticationThemeSettings theme =
-          const AuthenticationThemeSettings()}) async {
-    dialogTask ??= showGeneralDialog(
+      {AuthenticationThemeSettings theme = const AuthenticationThemeSettings(),
+      bool withoutEmail = false}) async {
+    dialogTask = showGeneralDialog(
         context: context,
         barrierDismissible: true,
         barrierLabel:
@@ -52,9 +54,11 @@ class AuthenticationService {
         pageBuilder: (BuildContext buildContext, Animation animation,
             Animation secondaryAnimation) {
           return Container(
-            child: InputEmailWidget(
-              themes: theme,
-            ),
+            child: withoutEmail
+                ? StartingWidget(themes: theme)
+                : InputEmailWidget(
+                    themes: theme,
+                  ),
           );
         });
 
@@ -62,28 +66,42 @@ class AuthenticationService {
     return successNotifier.message;
   }
 
-  Future<void> startPasscodeScreen(BuildContext context, String email,
-      {AuthenticationThemeSettings theme =
-          const AuthenticationThemeSettings()}) async {
-    if (UniversalPlatform.isAndroid || UniversalPlatform.isIOS) {
-      // ignore: unawaited_futures
-      Navigator.push(
-          context,
-          platformPageRoute(
-            context: context,
-            builder: (rootContext) =>
-                AuthenticationWidget(email: email, theme: theme),
-          ));
-    } else {
+  Future<String> startPasscodeScreen(
+    BuildContext context,
+    String email, {
+    AuthenticationThemeSettings theme = const AuthenticationThemeSettings(),
+    bool modalMode = false,
+  }) async {
+    if (!(UniversalPlatform.isAndroid || UniversalPlatform.isIOS)) {
       await url_launcher.launch(b2cUrl);
-      // ignore: unawaited_futures
-      Navigator.push(
+    }
+
+    if (modalMode) {
+      passcodeDialogTask = showGeneralDialog(
+          context: context,
+          barrierDismissible: true,
+          barrierLabel:
+              MaterialLocalizations.of(context).modalBarrierDismissLabel,
+          barrierColor: Colors.black45,
+          transitionDuration: const Duration(milliseconds: 200),
+          pageBuilder: (BuildContext buildContext, Animation animation,
+              Animation secondaryAnimation) {
+            return Container(
+              child: AuthenticationWidget(email: email, theme: theme),
+            );
+          });
+
+      await passcodeDialogTask;
+    } else {
+      await Navigator.push(
           context,
           platformPageRoute(
             context: context,
             builder: (rootContext) => InputTokenWidget(themes: theme),
           ));
     }
+
+    return successNotifier.message;
   }
 
   Future<dynamic> verifyEmail(String email) async {

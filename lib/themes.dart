@@ -16,6 +16,7 @@ class AuthenticationThemeSettings {
   final double emailBoxSize;
   final String enterTokenButtonText;
   final String enterTokenText;
+  final String signInText;
 
   const AuthenticationThemeSettings({
     this.emailTextFieldStyle,
@@ -35,6 +36,7 @@ class AuthenticationThemeSettings {
         'To Sign In or Register, please enter your email address below. Then we will send you a passcode to enter in the next screen.',
     this.emailBoxSize = 400,
     this.enterTokenText = 'Enter the token from website here',
+    this.signInText = 'Sign in',
   });
 }
 
