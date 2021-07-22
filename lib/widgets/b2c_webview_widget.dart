@@ -139,6 +139,16 @@ class _B2CWebviewWidgetState extends State<B2CWebviewWidget> {
           ?.i('email_ver_but_verify is visible $s');
       if (s == '1' || s == 'true') {
         screenState = AuthenticateState.confirm;
+        // change textfield input type to number (phone)
+        // ignore: unawaited_futures
+        controller
+            .evaluateJavascript(
+                "document.getElementById('email_ver_input').type = 'tel'")
+            .then((value) => AuthenticationService.shared.logger
+                ?.i('changed email_ver_input into tel number type'))
+            .catchError((e) {
+          AuthenticationService.shared.logger?.e(e.toString());
+        });
       }
     }).catchError((e) {
       AuthenticationService.shared.logger?.e(e.toString());
