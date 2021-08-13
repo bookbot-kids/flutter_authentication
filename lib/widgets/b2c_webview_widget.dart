@@ -16,11 +16,13 @@ class B2CWebviewWidget extends StatefulWidget {
     @required this.email,
     @required this.loadingCallback,
     @required this.completedCallback,
+    this.loadedCallback,
     this.useHybridForAndroid = false,
   }) : super(key: key);
   final String email;
   final Function(bool) loadingCallback;
   final Function(String) completedCallback;
+  final Function loadedCallback;
   final bool useHybridForAndroid;
 
   @override
@@ -139,6 +141,9 @@ class _B2CWebviewWidgetState extends State<B2CWebviewWidget> {
           ?.i('email_ver_but_verify is visible $s');
       if (s == '1' || s == 'true') {
         screenState = AuthenticateState.confirm;
+        if (widget.loadedCallback != null) {
+          widget.loadedCallback();
+        }
         // change textfield input type to number (phone)
         // ignore: unawaited_futures
         controller
