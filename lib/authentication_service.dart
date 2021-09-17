@@ -104,10 +104,14 @@ class AuthenticationService {
     return successNotifier.message;
   }
 
-  Future<dynamic> verifyEmail(String email) async {
+  Future<dynamic> verifyEmail(String email, {String countryCode}) async {
     try {
-      var response = await _http.get('/CheckAccount',
-          parameters: {'code': _azureKey, 'email': email});
+      final params = <String, dynamic>{'code': _azureKey, 'email': email};
+      if (countryCode?.isNotEmpty == true) {
+        params['country'] = countryCode;
+      }
+
+      final response = await _http.get('/CheckAccount', parameters: params);
       if (response['success'] == true) {
         return response;
       }
