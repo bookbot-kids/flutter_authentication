@@ -9,6 +9,7 @@ import 'package:flutter_authentication/themes.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:logger/logger.dart';
 import 'package:robust_http/robust_http.dart';
+import 'package:singleton/singleton.dart';
 import 'package:universal_platform/universal_platform.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
@@ -21,9 +22,11 @@ class AuthenticateNotifier extends ChangeNotifier {
 }
 
 class AuthenticationService {
+  factory AuthenticationService() =>
+      Singleton.lazy(() => AuthenticationService._privateConstructor())
+          .instance;
   AuthenticationService._privateConstructor();
-  static AuthenticationService shared =
-      AuthenticationService._privateConstructor();
+  static AuthenticationService shared = AuthenticationService();
 
   String _azureKey;
 

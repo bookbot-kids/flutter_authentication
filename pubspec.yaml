@@ -18,6 +18,7 @@ dependencies:
   auto_size_text: ^2.1.0
   common_utils: ^2.0.2
   url_launcher: ^6.0.7
+  singleton: ^0.0.2
   robust_http:
     git:
       url: git://github.com/bookbot-kids/robust-http.git
