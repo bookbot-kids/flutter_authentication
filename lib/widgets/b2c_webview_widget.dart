@@ -26,12 +26,12 @@ class B2CWebviewWidget extends StatefulWidget {
   final bool useHybridForAndroid;
 
   @override
-  _B2CWebviewWidgetState createState() => _B2CWebviewWidgetState();
+  B2CWebviewWidgetState createState() => B2CWebviewWidgetState();
 }
 
 enum AuthenticateState { init, verifyCode, confirm }
 
-class _B2CWebviewWidgetState extends State<B2CWebviewWidget> {
+class B2CWebviewWidgetState extends State<B2CWebviewWidget> {
   final _userAgent =
       'Mozilla/5.0 (iPhone; CPU iPhone OS 10_3_1 like Mac OS X) AppleWebKit/603.1.30 (KHTML, like Gecko) Version/10.0 Mobile/14E304 Safari/602.1';
   final Completer<WebViewController> _controller =
@@ -79,6 +79,18 @@ class _B2CWebviewWidgetState extends State<B2CWebviewWidget> {
             SystemChannels.textInput.invokeMethod('TextInput.hide');
           })),
     );
+  }
+
+  /// Send passcode to b2c site
+  Future<void> sendPasscode(String passcode) async {
+    final controller = await _controller.future;
+    // set passcode to text field
+    await controller.evaluateJavascript(
+        "document.getElementById('email_ver_input').value = $passcode");
+    await Future.delayed(Duration(milliseconds: 500));
+    // then click on button
+    await controller.evaluateJavascript(
+        'document.getElementById(\"email_ver_but_verify\").click();');
   }
 
   void startTimer() {
