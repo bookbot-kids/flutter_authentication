@@ -82,8 +82,13 @@ class B2CWebviewWidgetState extends State<B2CWebviewWidget> {
   }
 
   /// Send passcode to b2c site
-  Future<void> sendPasscode(String passcode) async {
+  Future<void> sendPasscode(String passcode, {String type}) async {
     final controller = await _controller.future;
+    if (type != null) {
+      await controller.evaluateJavascript(
+          "document.getElementById('email_ver_input').type = '$type'");
+    }
+
     // set passcode to text field
     await controller.evaluateJavascript(
         "document.getElementById('email_ver_input').value = $passcode");
