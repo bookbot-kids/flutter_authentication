@@ -1,7 +1,5 @@
 import 'package:auto_size_text/auto_size_text.dart';
-import 'package:common_utils/common_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_authentication/authentication_service.dart';
 import 'package:flutter_authentication/themes.dart';
 import 'package:flutter_authentication/view_helper.dart';
@@ -18,6 +16,9 @@ class InputEmailWidget extends StatefulWidget {
 }
 
 class InputEmailState extends State<InputEmailWidget> {
+  /// Regex of email.
+  static const String regexEmail =
+      '^\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*\$';
   final textController = TextEditingController();
   bool showLoading = false;
   @override
@@ -29,7 +30,7 @@ class InputEmailState extends State<InputEmailWidget> {
   Future onContinuePressed(BuildContext context) async {
     var email = textController.text;
     email = email?.toLowerCase()?.trim();
-    if (email.isEmpty || !RegexUtil.isEmail(email)) {
+    if (email.isEmpty || !RegExp(regexEmail).hasMatch(email)) {
       ViewHelper.showModal(context, 'Email is invalid');
       return;
     }

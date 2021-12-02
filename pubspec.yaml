@@ -11,13 +11,12 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_platform_widgets: ^1.9.5
+  flutter_platform_widgets: ^1.11.1
   universal_platform: ^1.0.0+1
-  webview_flutter: ^2.0.9
-  logger: ^1.0.0
+  webview_flutter: ^2.3.1
+  logger: ^1.1.0
   auto_size_text: ^2.1.0
-  common_utils: ^2.0.2
-  url_launcher: ^6.0.7
+  url_launcher: ^6.0.17
   singleton: ^0.0.2
   robust_http:
     git:
