@@ -7,7 +7,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_authentication/authentication_service.dart';
 import 'package:flutter_authentication/view_helper.dart';
 import 'package:universal_platform/universal_platform.dart';
-import 'package:webview_flutter/platform_interface.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 class B2CWebviewWidget extends StatefulWidget {

@@ -1,6 +1,4 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_authentication/authentication_widget.dart';
 import 'package:flutter_authentication/input_email_widget.dart';
 import 'package:flutter_authentication/input_token_widget.dart';

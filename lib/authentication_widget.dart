@@ -8,7 +8,6 @@ import 'package:flutter_authentication/authentication_service.dart';
 import 'package:flutter_authentication/themes.dart';
 import 'package:flutter_authentication/view_helper.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
-import 'package:webview_flutter/platform_interface.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
 enum ScreenState { init, verifyCode, confirm }
