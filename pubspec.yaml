@@ -1,6 +1,6 @@
 name: flutter_authentication
-description: A new Flutter package project.
-version: 0.0.1
+description: flutter authentication library
+version: 1.0.0
 homepage:
 publish_to: none
 
@@ -11,16 +11,16 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  flutter_platform_widgets: ^1.11.1
+  flutter_platform_widgets: ^1.20.0
   universal_platform: ^1.0.0+1
-  webview_flutter: ^3.0.0
+  webview_flutter: ^3.0.1
   logger: ^1.1.0
   auto_size_text: ^3.0.0
-  url_launcher: ^6.0.17
+  url_launcher: ^6.0.20
   singleton: ^0.0.2
   robust_http:
     git:
-      url: git://github.com/bookbot-kids/robust-http.git
+      url: https://github.com/bookbot-kids/robust-http.git
 
 dev_dependencies:
   flutter_test:
