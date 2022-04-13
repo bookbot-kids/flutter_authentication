@@ -21,8 +21,7 @@ class AuthenticateNotifier extends ChangeNotifier {
 
 class AuthenticationService {
   factory AuthenticationService() =>
-      Singleton.lazy(() => AuthenticationService._privateConstructor())
-          .instance;
+      Singleton.lazy(() => AuthenticationService._privateConstructor());
   AuthenticationService._privateConstructor();
   static AuthenticationService shared = AuthenticationService();
 
