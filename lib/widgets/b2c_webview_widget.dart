@@ -11,17 +11,17 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 class B2CWebviewWidget extends StatefulWidget {
   B2CWebviewWidget({
-    Key key,
-    @required this.email,
-    @required this.loadingCallback,
-    @required this.completedCallback,
+    Key? key,
+    required this.email,
+    required this.loadingCallback,
+    required this.completedCallback,
     this.loadedCallback,
     this.useHybridForAndroid = false,
   }) : super(key: key);
   final String email;
   final Function(bool) loadingCallback;
   final Function(String) completedCallback;
-  final Function loadedCallback;
+  final Function? loadedCallback;
   final bool useHybridForAndroid;
 
   @override
@@ -36,14 +36,14 @@ class B2CWebviewWidgetState extends State<B2CWebviewWidget> {
   final Completer<WebViewController> _controller =
       Completer<WebViewController>();
   bool hasInjectedJS = false;
-  Timer _timer;
-  Timer _timeoutTimer;
+  Timer? _timer;
+  Timer? _timeoutTimer;
   AuthenticateState screenState = AuthenticateState.init;
   int _injectFailedCount = 0;
   double loginTimeout = 30000;
   int _retry = 0;
   bool _siteLoaded = false;
-  DateTime _start;
+  DateTime? _start;
 
   @override
   Widget build(BuildContext context) {
@@ -81,7 +81,7 @@ class B2CWebviewWidgetState extends State<B2CWebviewWidget> {
   }
 
   /// Send passcode to b2c site
-  Future<void> sendPasscode(String passcode, {String type}) async {
+  Future<void> sendPasscode(String passcode, {String? type}) async {
     final controller = await _controller.future;
     if (type != null) {
       await controller.evaluateJavascript(
@@ -101,7 +101,7 @@ class B2CWebviewWidgetState extends State<B2CWebviewWidget> {
     _timer = Timer.periodic(Duration(milliseconds: 1000), detectWebviewState);
   }
 
-  Future<Timer> detectWebviewState(Timer timer) async {
+  Future<Timer?> detectWebviewState(Timer timer) async {
     if (!mounted) {
       return null;
     }
@@ -158,7 +158,7 @@ class B2CWebviewWidgetState extends State<B2CWebviewWidget> {
       if (s == '1' || s == 'true') {
         screenState = AuthenticateState.confirm;
         if (widget.loadedCallback != null) {
-          widget.loadedCallback();
+          widget.loadedCallback!();
         }
         // change textfield input type to number (phone)
         // ignore: unawaited_futures
@@ -198,7 +198,7 @@ class B2CWebviewWidgetState extends State<B2CWebviewWidget> {
         });
 
         // stop timer now
-        _timer.cancel();
+        _timer?.cancel();
       }
     }).catchError((e) {
       AuthenticationService.shared.logger?.e(e.toString());
@@ -259,7 +259,7 @@ class B2CWebviewWidgetState extends State<B2CWebviewWidget> {
       }
 
       var now = DateTime.now();
-      var diff = now.difference(_start).inMilliseconds;
+      var diff = now.difference(_start ?? now).inMilliseconds;
       AuthenticationService.shared.logger?.i('checkingTimeout $diff');
       if (diff >= loginTimeout) {
         if (_retry < 3) {
@@ -279,7 +279,7 @@ class B2CWebviewWidgetState extends State<B2CWebviewWidget> {
 
   Future<void> reload() async {
     var controller = await _controller.future;
-    await controller?.loadUrl(AuthenticationService.shared.b2cUrl);
+    await controller.loadUrl(AuthenticationService.shared.b2cUrl);
   }
 
   @override

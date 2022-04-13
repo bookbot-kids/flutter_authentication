@@ -8,7 +8,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 class StartingWidget extends StatefulWidget {
   final AuthenticationThemeSettings themes;
   const StartingWidget(
-      {Key key, this.themes = const AuthenticationThemeSettings()})
+      {Key? key, this.themes = const AuthenticationThemeSettings()})
       : super(key: key);
 
   @override
@@ -25,7 +25,7 @@ class StartingState extends State<StartingWidget> {
   }
 
   Future onContinuePressed(BuildContext context) async {
-    await AuthenticationService.shared.startPasscodeScreen(context, null);
+    await AuthenticationService.shared.startPasscodeScreen(context, '');
   }
 
   Widget _buildBox() {
@@ -76,7 +76,7 @@ class StartingState extends State<StartingWidget> {
                 right: 0,
                 bottom: 0,
                 child: widget.themes.backgroundImage != null
-                    ? Image.asset(widget.themes.backgroundImage)
+                    ? Image.asset(widget.themes.backgroundImage!)
                     : Container(
                         color: widget.themes.backgroundColor,
                       )),

@@ -8,7 +8,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 class InputTokenWidget extends StatelessWidget {
   final AuthenticationThemeSettings themes;
   const InputTokenWidget(
-      {Key key, this.themes = const AuthenticationThemeSettings()})
+      {Key? key, this.themes = const AuthenticationThemeSettings()})
       : super(key: key);
 
   void onButtonPressed(BuildContext context, String token) {
@@ -138,7 +138,7 @@ class InputTokenWidget extends StatelessWidget {
                 right: 0,
                 bottom: 0,
                 child: themes.backgroundImage != null
-                    ? Image.asset(themes.backgroundImage)
+                    ? Image.asset(themes.backgroundImage!)
                     : Container(
                         color: themes.backgroundColor,
                       )),

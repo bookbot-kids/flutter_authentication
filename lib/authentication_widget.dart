@@ -18,10 +18,10 @@ class AuthenticationWidget extends StatefulWidget {
   final AuthenticationThemeSettings theme;
 
   AuthenticationWidget({
-    Key key,
+    Key? key,
     this.title = 'Verification',
     this.theme = const AuthenticationThemeSettings(),
-    @required this.email,
+    required this.email,
   });
 
   @override
@@ -35,12 +35,12 @@ class AuthenticationState extends State<AuthenticationWidget> {
       Completer<WebViewController>();
   bool hasInjectedJS = false;
   bool showLoading = true;
-  Timer _timer;
-  Timer _timeoutTimer;
-  ScreenState screenState;
+  Timer? _timer;
+  Timer? _timeoutTimer;
+  ScreenState? screenState;
   int _retry = 0;
   bool _siteLoaded = false;
-  DateTime _start;
+  DateTime? _start;
   int _injectFailedCount = 0;
   double loginTimeout = 30000;
 
@@ -100,7 +100,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
       }
 
       var now = DateTime.now();
-      var diff = now.difference(_start).inMilliseconds;
+      var diff = now.difference(_start ?? now).inMilliseconds;
       AuthenticationService.shared.logger?.i('checkingTimeout $diff');
       if (diff >= loginTimeout) {
         if (_retry < 3) {
@@ -120,7 +120,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
 
   Future<void> reload() async {
     var controller = await _controller.future;
-    await controller?.loadUrl(AuthenticationService.shared.b2cUrl);
+    await controller.loadUrl(AuthenticationService.shared.b2cUrl);
   }
 
   @override
@@ -134,6 +134,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
   /// check for send button visible
   void detectSendButtonVisible(WebViewController controller) {
     controller
+        // ignore: deprecated_member_use
         .evaluateJavascript(
             "document.getElementById('email_ver_but_send') !== null && document.getElementById('email_ver_but_send').offsetParent !== null")
         .then((s) async {
@@ -158,6 +159,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
   /// check if verify code button visible to change next state
   void detectVerifyButtonVisible(WebViewController controller) {
     controller
+        // ignore: deprecated_member_use
         .evaluateJavascript(
             "document.getElementById('email_ver_but_verify') !== null && document.getElementById('email_ver_but_verify').offsetParent !== null")
         .then((s) async {
@@ -174,6 +176,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
   // check for edit email button is visible. If it does, it means user already verified pass code
   void detectEditEmailButtonVisible(WebViewController controller) {
     controller
+        // ignore: deprecated_member_use
         .evaluateJavascript(
             "document.getElementById('email_ver_but_edit') !== null && document.getElementById('email_ver_but_edit').offsetParent !== null")
         .then((s) async {
@@ -185,6 +188,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
         showHideLoading(true);
         // ignore: unawaited_futures
         controller
+            // ignore: deprecated_member_use
             .evaluateJavascript(
                 'document.getElementById(\"continue\").click();')
             .then((s) async {})
@@ -193,29 +197,25 @@ class AuthenticationState extends State<AuthenticationWidget> {
         });
 
         // stop timer now
-        _timer.cancel();
+        _timer?.cancel();
       }
     }).catchError((e) {
       AuthenticationService.shared.logger?.e(e.toString());
     });
   }
 
-  Future<Timer> detectWebviewState(Timer timer) async {
+  Future<Timer?> detectWebviewState(Timer timer) async {
     if (!mounted) {
       return null;
     }
 
     var controller = await _controller.future;
-    switch (screenState) {
-      case ScreenState.init:
-        detectSendButtonVisible(controller);
-        break;
-      case ScreenState.verifyCode:
-        detectVerifyButtonVisible(controller);
-        break;
-      case ScreenState.confirm:
-        detectEditEmailButtonVisible(controller);
-        break;
+    if (screenState == ScreenState.init) {
+      detectSendButtonVisible(controller);
+    } else if (screenState == ScreenState.verifyCode) {
+      detectVerifyButtonVisible(controller);
+    } else if (screenState == ScreenState.confirm) {
+      detectEditEmailButtonVisible(controller);
     }
 
     return null;
@@ -233,10 +233,12 @@ class AuthenticationState extends State<AuthenticationWidget> {
 
     // ignore: unawaited_futures
     controller
+        // ignore: deprecated_member_use
         .evaluateJavascript(
             'document.getElementById(\"email\").value=\"${widget.email}\"')
         .then((s) {
       controller
+          // ignore: deprecated_member_use
           .evaluateJavascript(
               'document.getElementById(\"email_ver_but_send\").click();')
           .then((s) async {
@@ -360,7 +362,7 @@ class AuthenticationState extends State<AuthenticationWidget> {
                 bottom: 0,
                 child: Container(
                   child: widget.theme.backgroundImage != null
-                      ? Image.asset(widget.theme.backgroundImage)
+                      ? Image.asset(widget.theme.backgroundImage!)
                       : Container(
                           color: widget.theme.backgroundColor,
                         ),

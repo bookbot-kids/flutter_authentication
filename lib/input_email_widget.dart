@@ -8,7 +8,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 class InputEmailWidget extends StatefulWidget {
   final AuthenticationThemeSettings themes;
   const InputEmailWidget(
-      {Key key, this.themes = const AuthenticationThemeSettings()})
+      {Key? key, this.themes = const AuthenticationThemeSettings()})
       : super(key: key);
 
   @override
@@ -29,7 +29,7 @@ class InputEmailState extends State<InputEmailWidget> {
 
   Future onContinuePressed(BuildContext context) async {
     var email = textController.text;
-    email = email?.toLowerCase()?.trim();
+    email = email.toLowerCase().trim();
     if (email.isEmpty || !RegExp(regexEmail).hasMatch(email)) {
       ViewHelper.showModal(context, 'Email is invalid');
       return;
@@ -227,7 +227,7 @@ class InputEmailState extends State<InputEmailWidget> {
                 right: 0,
                 bottom: 0,
                 child: widget.themes.backgroundImage != null
-                    ? Image.asset(widget.themes.backgroundImage)
+                    ? Image.asset(widget.themes.backgroundImage!)
                     : Container(
                         color: widget.themes.backgroundColor,
                       )),

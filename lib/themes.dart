@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
 class AuthenticationThemeSettings {
-  final TextStyle emailTextFieldStyle;
-  final TextStyle emailLabelTextStyle;
+  final TextStyle? emailTextFieldStyle;
+  final TextStyle? emailLabelTextStyle;
   final TextStyle emailTitleTextStyle;
   final Color emailBoxColor;
-  final TextStyle emailButtonStyle;
-  final String backgroundImage;
+  final TextStyle? emailButtonStyle;
+  final String? backgroundImage;
   final Color backgroundColor;
   final String emailPlaceholder;
   final String emailButtonText;
@@ -58,9 +58,12 @@ class Radii {
 }
 
 class Device {
-  static bool get isTablet =>
-      MediaQueryData.fromWindow(WidgetsBinding.instance.window)
-          .size
-          .shortestSide >=
-      600;
+  static bool get isTablet {
+    final binding = WidgetsBinding.instance;
+    if (binding != null) {
+      return MediaQueryData.fromWindow(binding.window).size.shortestSide >= 600;
+    }
+
+    return false;
+  }
 }

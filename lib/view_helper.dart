@@ -12,7 +12,7 @@ class ViewHelper {
   }
 
   static void showModal(BuildContext context, String message,
-      {String buttonText = 'OK', String title}) {
+      {String buttonText = 'OK', String? title}) {
     showPlatformDialog(
         context: context,
         builder: (c) => AlertDialog(

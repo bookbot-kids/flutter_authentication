@@ -12,7 +12,7 @@ import 'package:universal_platform/universal_platform.dart';
 import 'package:url_launcher/url_launcher.dart' as url_launcher;
 
 class AuthenticateNotifier extends ChangeNotifier {
-  String message;
+  String? message;
   void notify(String eventMessage) {
     message = eventMessage;
     notifyListeners();
@@ -25,14 +25,14 @@ class AuthenticationService {
   AuthenticationService._privateConstructor();
   static AuthenticationService shared = AuthenticationService();
 
-  String _azureKey;
+  late String _azureKey;
 
   final successNotifier = AuthenticateNotifier();
-  Logger logger;
-  HTTP _http;
-  String b2cUrl;
-  Future dialogTask;
-  Future passcodeDialogTask;
+  Logger? logger;
+  late HTTP _http;
+  late String b2cUrl;
+  late Future dialogTask;
+  late Future passcodeDialogTask;
 
   void init(Logger logger, Map<String, dynamic> config) {
     _azureKey = config['azureKey'];
@@ -41,7 +41,7 @@ class AuthenticationService {
     b2cUrl = config['azureB2CAuthUrl'];
   }
 
-  Future<String> startAuthentication(BuildContext context,
+  Future<String?> startAuthentication(BuildContext context,
       {AuthenticationThemeSettings theme = const AuthenticationThemeSettings(),
       bool withoutEmail = false}) async {
     dialogTask = showGeneralDialog(
@@ -66,7 +66,7 @@ class AuthenticationService {
     return successNotifier.message;
   }
 
-  Future<String> startPasscodeScreen(
+  Future<String?> startPasscodeScreen(
     BuildContext context,
     String email, {
     AuthenticationThemeSettings theme = const AuthenticationThemeSettings(),
@@ -104,7 +104,7 @@ class AuthenticationService {
     return successNotifier.message;
   }
 
-  Future<dynamic> verifyEmail(String email, {String countryCode}) async {
+  Future<dynamic> verifyEmail(String email, {String? countryCode}) async {
     try {
       final params = <String, dynamic>{'code': _azureKey, 'email': email};
       if (countryCode?.isNotEmpty == true) {
