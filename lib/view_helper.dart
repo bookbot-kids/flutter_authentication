@@ -19,7 +19,7 @@ class ViewHelper {
               title: title == null ? null : Text(title),
               content: Text(message),
               actions: [
-                FlatButton(
+                TextButton(
                   child: Text(buttonText),
                   onPressed: () => Navigator.of(context).pop(),
                 ),

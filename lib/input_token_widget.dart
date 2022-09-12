@@ -7,6 +7,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class InputTokenWidget extends StatelessWidget {
   final AuthenticationThemeSettings themes;
+
   const InputTokenWidget(
       {Key? key, this.themes = const AuthenticationThemeSettings()})
       : super(key: key);
@@ -85,16 +86,21 @@ class InputTokenWidget extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              child: FlatButton(
+                              child: TextButton(
                                 onPressed: () =>
                                     onButtonPressed(context, controller.text),
-                                color: Color.fromARGB(255, 110, 203, 242),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(8)),
+                                style: TextButton.styleFrom(
+                                  backgroundColor:
+                                      Color.fromARGB(255, 110, 203, 242),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(8)),
+                                  ),
+                                  textStyle: TextStyle(
+                                    color: Color.fromARGB(255, 255, 255, 255),
+                                  ),
+                                  padding: EdgeInsets.all(0),
                                 ),
-                                textColor: Color.fromARGB(255, 255, 255, 255),
-                                padding: EdgeInsets.all(0),
                                 child: AutoSizeText(
                                   themes.enterTokenButtonText,
                                   maxLines: 1,

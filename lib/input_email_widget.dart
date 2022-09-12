@@ -172,15 +172,19 @@ class InputEmailState extends State<InputEmailWidget> {
                               child: SizedBox(
                                 width: double.infinity,
                                 height: double.infinity,
-                                child: FlatButton(
+                                child: TextButton(
                                   onPressed: () => onContinuePressed(context),
-                                  color: Color.fromARGB(255, 110, 203, 242),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(8)),
+                                  style: TextButton.styleFrom(
+                                    backgroundColor: Color.fromARGB(255, 110, 203, 242),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                      BorderRadius.all(Radius.circular(8)),
+                                    ),
+                                    textStyle: TextStyle(
+                                      color: Color.fromARGB(255, 255, 255, 255),
+                                    ),
+                                    padding: EdgeInsets.all(0),
                                   ),
-                                  textColor: Color.fromARGB(255, 255, 255, 255),
-                                  padding: EdgeInsets.all(0),
                                   child: AutoSizeText(
                                     widget.themes.emailButtonText,
                                     maxLines: 1,
